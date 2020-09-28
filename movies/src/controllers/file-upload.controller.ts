@@ -7,6 +7,7 @@ import {
   requestBody,
   Response,
   RestBindings,
+  param,
 } from '@loopback/rest';
 import multer from 'multer';
 import path from 'path';
@@ -25,6 +26,60 @@ export class FileUploadController {
     @repository(MovieRepository)
     private movieRepository: MovieRepository
   ) {}
+
+   //POST TO MOVIE IMAGE ASSOCIATED TO MOVIEID
+
+  /**
+   * Add or replace the profile photo of a customer by customerId
+   * @param request
+   * @param movieId
+   * @param response
+   */
+  @post('/movieImage', {
+    responses: {
+      200: {
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+            },
+          },
+        },
+        description: 'Movie Image Path associated to movieId',
+      },
+    },
+  })
+  async movieUpload(
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+    @param.query.string('movieId') movieId: string,
+    @requestBody.file() request: Request,
+  ): Promise<object | false> {
+    const moviePath = path.join(
+      __dirname,
+      UploadFilesKeys.MOVIE_IMAGE_PATH,
+    );
+    let res = await this.StoreFileToPath(
+      moviePath,
+      UploadFilesKeys.MOVIE_IMAGE_FIELDNAME,
+      request,
+      response,
+      UploadFilesKeys.IMAGE_ACCEPTED_EXT,
+    );
+    if (res) {
+      const filename = response.req?.file.filename;
+      if (filename) {
+        let mov: Movie = await this.movieRepository.findById(
+          movieId,
+        );
+        if (mov) {
+          mov.path = filename;
+          this.movieRepository.replaceById(movieId, mov);
+          return {filename: filename};
+        }
+      }
+    }
+    return res;
+  }
 
   //POST PARA MOVIE IMAGE
 

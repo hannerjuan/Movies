@@ -23,6 +23,12 @@ export class Movie extends Entity {
   title?: string;
 
   @property({
+    type: 'string',
+    default: 'path',
+  })
+  path?: string;
+
+  @property({
     type: 'array',
     itemType: 'string',
     default: 'directors',
