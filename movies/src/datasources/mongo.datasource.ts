@@ -4,11 +4,11 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'mongo',
   connector: 'mongodb',
-  url: 'mongodb+srv://m001-student:NB8nVRTXYCdpLcTw@cluster0.r7aqp.mongodb.net/moviesdb?retryWrites=true&w=majority',
-  host: 'cluster0.r7aqp.mongodb.net',
+  url: 'mongodb+srv://movieUser:3nddjM0CTdtxp8MU@cluster0.mlqqu.mongodb.net/movies?retryWrites=true&w=majority',
+  host: 'cluster0.mlqqu.mongodb.net',
   port: 27017,
-  user: 'm001-student',
-  password: 'NB8nVRTXYCdpLcTw',
+  user: 'movieUser',
+  password: '3nddjM0CTdtxp8MU',
   database: 'MoviesDB',
   useNewUrlParser: true
 };

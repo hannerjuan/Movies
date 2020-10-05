@@ -8,6 +8,8 @@ import {
   Response,
   RestBindings,
   param,
+  oas,
+  get
 } from '@loopback/rest';
 import multer from 'multer';
 import path from 'path';
@@ -27,6 +29,49 @@ export class FileUploadController {
     private movieRepository: MovieRepository
   ) {}
 
+  /**
+   *
+   * @param recordId
+   * @param response
+   */
+  @get('/files/movie/{recordId}')
+  @oas.response.file()
+  async downloadFile(
+    // @param.path.string('type') type: string,
+    @param.path.string('recordId') recordId: string,
+    @inject(RestBindings.Http.RESPONSE) response: Response,
+  ) {
+    // let filename
+    const folder = this.GetFolderPath();
+    const fileName = await this.GetFilenameById(recordId);
+    const file = path.resolve(folder, fileName);
+    response.download(file, fileName);
+    return response;
+  }
+  private GetFolderPath() {
+    let filePath = '';
+      // movie
+        filePath = path.join(__dirname, UploadFilesKeys.MOVIE_IMAGE_PATH);
+        
+    return filePath;
+  }
+  /**
+   *
+   * @param type
+   */
+  private async GetFilenameById(recordId: string) {
+    let fileName = '';
+    
+      // movie
+        const movie: Movie = await this.movieRepository.findById(
+          recordId,
+        );
+        fileName = movie.path ?? '';
+      
+    return fileName;
+  
+}
+
    //POST TO MOVIE IMAGE ASSOCIATED TO MOVIEID
 
   /**
@@ -35,7 +80,7 @@ export class FileUploadController {
    * @param movieId
    * @param response
    */
-  @post('/movieImage', {
+  @post('/movieImagePath', {
     responses: {
       200: {
         content: {
